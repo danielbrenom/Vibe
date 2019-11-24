@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Vibe.Views.CadastroPage"
+             xmlns:vm="clr-namespace:Vibe.ViewModels"
+             xmlns:behaviorValidationPack="clr-namespace:Xamarin.Forms.BehaviorValidationPack;assembly=Xamarin.Forms.BehaviorValidationPack"
+             Title="{Binding Title}">
+    <StackLayout Orientation="Vertical" Padding="10" Spacing="10">
+        <Label FontSize="22">
+            <Label.FormattedText>
+                <FormattedString>
+                    <FormattedString.Spans>
+                        <Span Text="Cadastro" FontAttributes="Bold" FontSize="22" />
+                    </FormattedString.Spans>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+        <Label Text="Nome" FontSize="Medium" />
+        <Entry x:Name="Nome" Text="{Binding Nome}" Placeholder="XXX.XXX.XXX-XX" FontSize="Small"/>
+        <Label Text="Data de Nascimento" FontSize="Medium" />
+        <DatePicker x:Name="Nascimento" Date="{Binding Nascimento}" Format="d"/>
+        <Label Text="CPF" FontSize="Medium" />
+        <Entry x:Name="Cpf" Text="{Binding Cpf}" Placeholder="XXX.XXX.XXX-XX" FontSize="Small">
+            <Entry.Behaviors>
+                <behaviorValidationPack:CPFValidationBehavior />
+                <behaviorValidationPack:MaskedBehavior Mask="XXX.XXX.XXX-XX" />
+            </Entry.Behaviors>
+        </Entry>
+        <Label Text="Senha" FontSize="Medium" />
+        <Entry x:Name="Senha" Placeholder="Senha" Text="{Binding Senha}" IsPassword="True" FontSize="Small" Margin="0" />
+        <Button Margin="0,10,0,0" Text="Login" TextColor="White" Command="{Binding CadastroCommand}" />
+    </StackLayout>
+</ContentPage>
