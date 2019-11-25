@@ -1,14 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Security;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using Vibe.Interfaces;
 using Vibe.Models.Usuario;
-using Vibe.Services;
-using Vibe.Views;
 using Xamarin.Forms;
 using static Xamarin.Forms.Application;
 
@@ -21,7 +15,7 @@ namespace Vibe.ViewModels
         private Usuario info;
         private ISessionStorage _sessionStorage;
         public Command AuthenticateCommand { get; set; }
-
+        public Command LogoutCommand { get; set; }
         #region Properties
 
         public string CPF
@@ -48,27 +42,19 @@ namespace Vibe.ViewModels
             set => SetProperty(ref info, value);
         }
 
-        private bool _authenticated;
-        public bool Authenticated
-        {
-            get => _authenticated;
-            set { SetProperty(ref _authenticated, value); }
-        }
-
         #endregion
 
         public AboutViewModel(ISessionStorage sessionStorage)
         {
             _sessionStorage = sessionStorage;
-            _sessionStorage.PropertyChanged+= SessionStorageOnPropertyChanged;
-            Authenticated = false;
+            _sessionStorage.PropertyChanged += SessionStorageOnPropertyChanged;
+            _sessionStorage.Authenticated = false;
             Title = "Usuario";
             AuthenticateCommand = new Command(LoginCommand);
+            LogoutCommand = new Command(Logout);
             LoginBusy = false;
             UserInfo = new Usuario {nome = "Carregando...", cpf = "00000000000", nascimento = DateTime.Now};
         }
-
-        
 
         private async void LoginCommand()
         {
@@ -88,18 +74,17 @@ namespace Vibe.ViewModels
 
             try
             {
-                var result = await ApiServices.Login(cpf, password);
+                var result = await ApiServices.Login(CPF, Password);
+                Authenticated = _sessionStorage.Authenticated = result;
+
                 if (result)
                 {
-                    await Current.MainPage.DisplayAlert("Sucesso", "Usuario autenticado", "Ok");
                     UserInfo = await ApiServices.GetUserInfo(CPF);
                 }
                 else
                 {
                     await Current.MainPage.DisplayAlert("Erro", "Login ou senha incorretos", "Ok");
                 }
-
-                _sessionStorage.Authenticated = result;
             }
             catch (Exception exc)
             {
@@ -109,6 +94,21 @@ namespace Vibe.ViewModels
             {
                 LoginBusy = false;
             }
+        }
+
+        public async Task<bool> LoginOnStart()
+        {
+            if (_sessionStorage.StorageData.StorageAuthData == null) return await Task.FromResult(true);
+            var result = await ApiServices.LoginFromCache();
+            UserInfo = _sessionStorage.StorageData.UserInfo;
+            Authenticated = _sessionStorage.Authenticated = result;
+            return await Task.FromResult(true);
+        }
+
+        public void Logout()
+        {
+            Authenticated = _sessionStorage.Authenticated = false;
+            _sessionStorage.StorageData = null;
         }
 
         private void SessionStorageOnPropertyChanged(object sender, PropertyChangedEventArgs e)

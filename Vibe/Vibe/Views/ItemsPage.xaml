@@ -1,53 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:converters="clr-namespace:Vibe.Services.Converters"
+             xmlns:converters="clr-namespace:Vibe.Converters"
              xmlns:viewModels="clr-namespace:Vibe.ViewModels"
+             xmlns:views="clr-namespace:Vibe.Views;"
              x:Class="Vibe.Views.ItemsPage"
              BindingContext="{Binding ItemsViewModel, Source={StaticResource Locator}}"
              Title="{Binding Title}"
              x:Name="BrowseItemsPage">
-    <!--<ContentPage.BindingContext>
-        <viewModels:ItemsViewModel />
-    </ContentPage.BindingContext>-->
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BooleanConverter x:Key="BooleanInverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Recarregar" Clicked="MenuItem_OnClicked"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout Orientation="Vertical">
-            <StackLayout Orientation="Vertical" Padding="16,40,16,40" Spacing="10" IsVisible="{Binding Authenticated, Converter={StaticResource BooleanInverter}}">
-                <Label Text="Necessário estar logado para acessar a lista de clientes" FontSize="Medium" />
-            </StackLayout>
-            <StackLayout Orientation="Vertical" IsVisible="{Binding Authenticated}">
-                <ListView x:Name="ItemsListView"
-                          ItemsSource="{Binding Clientes}"
-                          VerticalOptions="FillAndExpand"
-                          HasUnevenRows="true"
-                          RefreshCommand="{Binding LoadItemsCommand}"
-                          IsPullToRefreshEnabled="true"
-                          IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                          CachingStrategy="RecycleElement"
-                          ItemSelected="OnItemSelected">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <StackLayout Padding="10">
-                                    <Label Text="{Binding nome}"
-                                           LineBreakMode="NoWrap"
-                                           Style="{DynamicResource ListItemTextStyle}"
-                                           FontSize="16" />
-                                    <Label Text="{Binding cpf}"
-                                           LineBreakMode="NoWrap"
-                                           Style="{DynamicResource ListItemDetailTextStyle}"
-                                           FontSize="13" />
-                                </StackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>
+            <views:InternetStatus/>
+            <ListView x:Name="ItemsListView"
+                      ItemsSource="{Binding Clientes}"
+                      VerticalOptions="FillAndExpand"
+                      HasUnevenRows="true"
+                      RefreshCommand="{Binding LoadItemsCommand}"
+                      IsPullToRefreshEnabled="true"
+                      IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                      CachingStrategy="RecycleElement"
+                      ItemSelected="OnItemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding nome}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemTextStyle}"
+                                       FontSize="16" />
+                                <Label Text="{Binding cpf}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemDetailTextStyle}"
+                                       FontSize="13" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

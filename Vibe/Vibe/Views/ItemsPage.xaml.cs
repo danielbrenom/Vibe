@@ -1,53 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
+using Vibe.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
-using Vibe.Models;
-using Vibe.Services;
-using Vibe.Views;
+using Vibe.Models.Clientes;
 using Vibe.ViewModels;
+using Xamarin.Essentials;
 
 namespace Vibe.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ItemsPage : ContentPage
     {
-        ItemsViewModel viewModel;
-
+        readonly ItemsViewModel _viewModel;
         public ItemsPage()
         {
             InitializeComponent();
 
-            BindingContext = viewModel = (ItemsViewModel)ServiceLocator.Current.GetInstance(typeof(ItemsViewModel));
+            BindingContext = _viewModel = (ItemsViewModel)ServiceLocator.Current.GetInstance(typeof(ItemsViewModel));
         }
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
         {
-            if (!(args.SelectedItem is Item item))
+            if (!(args.SelectedItem is Cliente item))
                 return;
-
-            await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Application.Current.MainPage.DisplayAlert("Atenção", "Não é possível verificar informações de clientes sem acesso a internet", "Fechar");
+                ItemsListView.SelectedItem = null;
+                return;
+            }
+            var api = (IApiService)ServiceLocator.Current.GetInstance(typeof(IApiService));
+            var clientComplemento = await api.LoadClienteComplemento(item.id);
+            await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item, clientComplemento)));
 
             // Manually deselect item.
             ItemsListView.SelectedItem = null;
-        }
-
-        async void AddItem_Clicked(object sender, EventArgs e)
-        {
-            await Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
-            //if (viewModel.Clientes.Count == 0)
-            //    viewModel.LoadItemsCommand.Execute(null);
+            if (_viewModel.Clientes.Count == 0 && _viewModel.IsAuthenticated())
+                _viewModel.LoadItemsCommand.Execute(null);
+        }
+
+        private void MenuItem_OnClicked(object sender, EventArgs e)
+        {
+            _viewModel.LoadItemsCommand.Execute(null);
         }
     }
 }

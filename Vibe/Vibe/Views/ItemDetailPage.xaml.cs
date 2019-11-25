@@ -1,9 +1,6 @@
-﻿using System;
-
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
-using Vibe.Models;
+using Vibe.Models.Clientes;
 using Vibe.ViewModels;
 
 namespace Vibe.Views
@@ -24,13 +21,19 @@ namespace Vibe.Views
         {
             InitializeComponent();
 
-            var item = new Item
+            var item = new Cliente
             {
-                Text = "Item 1",
-                Description = "This is an item description."
+                nome = "Item 1",
+                cpf = "This is an item description."
+            };
+            var complemto = new ClienteComplemento
+            {
+                empresa = "empresa",
+                endereco = new ClienteEndereco { cidade = "cidade", endereco = "endereco", complemento = "complemento", numero = "numero"},
+                urlImagem = "imagem"
             };
 
-            viewModel = new ItemDetailViewModel(item);
+            viewModel = new ItemDetailViewModel(item, complemto);
             BindingContext = viewModel;
         }
     }

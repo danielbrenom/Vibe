@@ -2,7 +2,7 @@
 using System.Globalization;
 using Xamarin.Forms;
 
-namespace Vibe.Services.Converters
+namespace Vibe.Converters
 {
     public class BooleanConverter : IValueConverter
     {

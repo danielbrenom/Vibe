@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Vibe.Models;
 using Vibe.Models.Clientes;
+using Vibe.Services.Interfaces;
 
 namespace Vibe.Services
 {
-    class ClienteDataStore : IDataStore<Cliente>
+    public class ClienteDataStore : IDataStore<Cliente>
     {
         public List<Cliente> ClientList;
 
         public ClienteDataStore()
         {
-
+            ClientList = new List<Cliente>();
+            var list = new List<Cliente>()
+            {
+                new Cliente{cpf = "000", especial = true, id = "1", nome = "Nome"}
+            };
+            ClientList.AddRange(list);
         }
 
         public async Task<bool> AddItemAsync(Cliente item)
@@ -40,6 +43,16 @@ namespace Vibe.Services
             return await Task.FromResult(true);
         }
 
+        public async Task<bool> ReplaceListAsync(List<Cliente> list)
+        {
+            ClientList.Clear();
+            foreach (var cliente in list)
+            {
+                ClientList.Add(cliente);
+            }
+            return await Task.FromResult(true);
+        }
+
         public async Task<Cliente> GetItemAsync(string id)
         {
             return await Task.FromResult(ClientList.FirstOrDefault(s => s.id == id));
@@ -49,6 +62,12 @@ namespace Vibe.Services
         {
             
             return await Task.FromResult(ClientList);
+        }
+
+        public async Task<bool> ClearData()
+        {
+            ClientList.Clear();
+            return await Task.FromResult(true);
         }
     }
 }

@@ -13,11 +13,14 @@ namespace Vibe.Views
     public partial class AboutPage : ContentPage
     {
         AboutViewModel aboutViewModel;
+        private bool once;
+
         public AboutPage()
         {
             InitializeComponent();
 
-            BindingContext = aboutViewModel = (AboutViewModel)ServiceLocator.Current.GetInstance(typeof(AboutViewModel));
+            BindingContext = aboutViewModel =
+                (AboutViewModel) ServiceLocator.Current.GetInstance(typeof(AboutViewModel));
         }
 
         async void Cadastro_OnClicked(object sender, EventArgs e)
@@ -25,11 +28,11 @@ namespace Vibe.Views
             await Navigation.PushAsync(new CadastroPage());
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-
-            var user = aboutViewModel;
+            if (once) return;
+            once = await aboutViewModel.LoginOnStart();
         }
     }
 }

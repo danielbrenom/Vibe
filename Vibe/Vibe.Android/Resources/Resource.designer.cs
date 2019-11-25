@@ -26,6 +26,8 @@ namespace Vibe.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::PCLStorage.Resource.String.ApplicationName = global::Vibe.Droid.Resource.String.ApplicationName;
+			global::PCLStorage.Resource.String.Hello = global::Vibe.Droid.Resource.String.Hello;
 			global::Xamarin.Essentials.Resource.Attribute.font = global::Vibe.Droid.Resource.Attribute.font;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderAuthority = global::Vibe.Droid.Resource.Attribute.fontProviderAuthority;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderCerts = global::Vibe.Droid.Resource.Attribute.fontProviderCerts;
@@ -6111,6 +6113,12 @@ namespace Vibe.Droid
 		
 		public partial class String
 		{
+			
+			// aapt resource value: 0x7f0c003d
+			public const int ApplicationName = 2131492925;
+			
+			// aapt resource value: 0x7f0c003c
+			public const int Hello = 2131492924;
 			
 			// aapt resource value: 0x7f0c0015
 			public const int abc_action_bar_home_description = 2131492885;

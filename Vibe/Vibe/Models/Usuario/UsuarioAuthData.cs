@@ -9,28 +9,6 @@ namespace Vibe.Models.Usuario
 {
     public class UsuarioAuthData
     {
-        public async Task<string> GetAuthToken()
-        {
-            try
-            {
-                return await SecureStorage.GetAsync("auth_token");
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public async Task SetAuthToken(string token)
-        {
-            try
-            {
-                await SecureStorage.SetAsync("auth_token", token);
-            }
-            catch
-            {
-                return;
-            }
-        }
+        public string UserLogin, UserIdentity, UserAuthToken;
     }
 }

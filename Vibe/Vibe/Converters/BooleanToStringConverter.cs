@@ -4,13 +4,13 @@ using System.Globalization;
 using System.Text;
 using Xamarin.Forms;
 
-namespace Vibe.Services.Converters
+namespace Vibe.Converters
 {
-    class DateConverter: IValueConverter
+    class BooleanToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToDateTime(value).ToShortDateString();
+            return System.Convert.ToBoolean(value) ? "Sim" : "Não";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

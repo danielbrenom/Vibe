@@ -3,62 +3,69 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
+using Vibe.Interfaces;
 using Xamarin.Forms;
 
 using Vibe.Models;
 using Vibe.Models.Clientes;
 using Vibe.Services;
-using Vibe.Views;
+using Xamarin.Essentials;
 
 namespace Vibe.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        public ObservableCollection<Item> Items { get; set; }
         public Command LoadItemsCommand { get; set; }
         public ObservableCollection<Cliente> Clientes { get; set; }
         private readonly ISessionStorage _sessionStorage;
-        private bool _authenticated;
-        public bool Authenticated
-        {
-            get => _authenticated;
-            set => SetProperty(ref _authenticated, value);
-        }
 
         public ItemsViewModel(ISessionStorage sessionStorage)
         {
             Title = "Clientes";
-            Items = new ObservableCollection<Item>();
             Clientes = new ObservableCollection<Cliente>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
             _sessionStorage = sessionStorage;
-            sessionStorage.PropertyChanged += SessionStorageOnPropertyChanged;
+            _sessionStorage.PropertyChanged += SessionStorageOnPropertyChanged;
         }
 
-        private void SessionStorageOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async Task ExecuteLoadItemsCommand()
         {
-            if (e.PropertyName == nameof(Authenticated))
-            {
-                Authenticated = _sessionStorage.Authenticated;
-            }
-        }
-
-        async Task ExecuteLoadItemsCommand()
-        {
-            if (!IsBusy && !_sessionStorage.Authenticated)
+            if (IsBusy)
                 return;
 
             IsBusy = true;
 
+            if (!_sessionStorage.Authenticated)
+            {
+                await Application.Current.MainPage.DisplayAlert("Atenção", "Usuário não autenticado", "OK");
+                IsBusy = false;
+                return;
+            }
+            
             try
             {
                 Clientes.Clear();
-                var clientes = await ApiServices.LoadClientes();
-                foreach (var cliente in clientes.clienteList)
+                if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 {
-                    await DataStore.AddItemAsync(cliente);
+                    if (!await ApiServices.LoadClientes())
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Atenção", "Ocorreu um erro ao carregar a lista de clientes.", "OK");
+                        IsBusy = false;
+                        return;
+                    }
                 }
+                else
+                {
+                    if (_sessionStorage.StorageData == null)
+                    {
+                        IsBusy = false;
+                        await Application.Current.MainPage.DisplayAlert("Atenção", "Não foi possível recuperar a lista de clientes do cache nem da internet.", "OK");
+                        return;
+                    }
+
+                    await DataStore.ReplaceListAsync(_sessionStorage.StorageData.ClienteListData);
+                }
+                
                 var items = await DataStore.GetItemsAsync(true);
                 foreach (var item in items)
                 {
@@ -72,6 +79,18 @@ namespace Vibe.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        public bool IsAuthenticated()
+        {
+            return _sessionStorage.Authenticated;
+        }
+        private void SessionStorageOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Authenticated))
+            {
+                Authenticated = _sessionStorage.Authenticated;
             }
         }
     }
