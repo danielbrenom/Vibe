@@ -29,6 +29,6 @@
         </Entry>
         <Label Text="Senha" FontSize="Medium" />
         <Entry x:Name="Senha" Placeholder="Senha" Text="{Binding Senha}" IsPassword="True" FontSize="Small" Margin="0" />
-        <Button Margin="0,10,0,0" Text="Login" TextColor="White" Command="{Binding CadastroCommand}" />
+        <Button Margin="0,10,0,0" Text="Cadastrar" TextColor="White" Command="{Binding CadastroCommand}" />
     </StackLayout>
 </ContentPage>
