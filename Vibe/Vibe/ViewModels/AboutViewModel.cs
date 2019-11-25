@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Vibe.Interfaces;
 using Vibe.Models.Usuario;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using static Xamarin.Forms.Application;
 
@@ -69,6 +70,12 @@ namespace Vibe.ViewModels
             if (CPF.Length > 14 || CPF.Length < 14)
             {
                 await Current.MainPage.DisplayAlert("Atenção", "O campo CPF deve possuir 11 digitos!", "OK");
+                return;
+            }
+
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Current.MainPage.DisplayAlert("Atenção", "Internet indiponível", "OK");
                 return;
             }
 
