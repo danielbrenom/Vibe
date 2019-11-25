@@ -8,9 +8,6 @@
              xmlns:local="clr-namespace:Vibe.Views" 
              BindingContext="{Binding AboutViewModel, Source={StaticResource Locator}}"
              Title="{Binding Title}">
-    <!-- <ContentPage.BindingContext> -->
-    <!--     <vm:AboutViewModel /> -->
-    <!-- </ContentPage.BindingContext> -->
     <ContentPage.Resources>
         <ResourceDictionary>
             <Color x:Key="Primary">#2196F3</Color>

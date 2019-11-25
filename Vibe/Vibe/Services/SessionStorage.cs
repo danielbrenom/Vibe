@@ -36,7 +36,11 @@ namespace Vibe.Services
             var storageFolder = await rootFolder.CreateFolderAsync("Storage", CreationCollisionOption.OpenIfExists);
             var fileExists = await storageFolder.CheckExistsAsync("cache.dat");
             if (fileExists != ExistenceCheckResult.FileExists)
+            {
+                StorageData = new UsuarioStorageData();
                 return await Task.FromResult(false);
+            }
+
             try
             {
                 var file = await storageFolder.GetFileAsync("cache.dat");

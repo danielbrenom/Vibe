@@ -31,8 +31,6 @@ namespace Vibe
             ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
             
             MainPage = new LoaginPage();
-            //Task.Run(async ()=> { await sessionStorage.LoadFromStorage(); }).Wait();
-            //MainPage = new MainPage();
         }
 
         protected override async void OnStart()
