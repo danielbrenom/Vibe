@@ -113,11 +113,10 @@ namespace Vibe.ViewModels
             return await Task.FromResult(true);
         }
 
-        public async void Logout()
+        public void Logout()
         {
             Authenticated = _sessionStorage.Authenticated = false;
             _sessionStorage.StorageData = null;
-            await _sessionStorage.SaveInStorage();
         }
 
         private void SessionStorageOnPropertyChanged(object sender, PropertyChangedEventArgs e)
