@@ -75,6 +75,7 @@ namespace Vibe.ViewModels
 
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
+                LoginBusy = false;
                 await Current.MainPage.DisplayAlert("Atenção", "Internet indiponível", "OK");
                 return;
             }
